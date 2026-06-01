@@ -1,0 +1,37 @@
+# Desactivar el listado de directorios
+Options -Indexes
+
+# Proteger archivos sensibles
+<FilesMatch "\.(sql|log|ini|sh|bak|swp|zip|rar|7z|tar|gz|tgz|env|local|example|yml|yaml|json|lock|md|pem|key|crt|cer|p12|pfx|phar|bat|cmd|ps1|psm1|vbs)$">
+    Order allow,deny
+    Deny from all
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "^\.env">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "^_tmp_.*\.php$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^vendor/ - [F,L]
+RewriteRule ^backup/cli/ - [F,L]
+RewriteRule ^saas/.*\.(sql|zip|tar|gz|tgz|7z|rar)$ - [F,L]
+RewriteRule ^(?:uploads|storage)/.*\.(?:php|phtml|phar|php[0-9])$ - [F,L]
+RewriteRule ^storage/ - [F,L]
+RewriteRule ^docs/ - [F,L]
+</IfModule>
+
+<FilesMatch "^\.ht">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "SAMEORIGIN"
+Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

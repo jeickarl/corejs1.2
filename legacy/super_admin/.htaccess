@@ -1,0 +1,8 @@
+# Desactivar el listado de directorios
+Options -Indexes
+
+# Proteger archivos sensibles
+<FilesMatch "\.(sql|log|ini|sh|bak|swp|txt|md)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

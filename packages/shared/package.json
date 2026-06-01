@@ -1,0 +1,10 @@
+{
+  "name": "@corejs/shared",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./types": "./src/types/index.ts"
+  }
+}
+

@@ -1,0 +1,14 @@
+{
+  "name": "corejs",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:backend": "npm.cmd --workspace apps/backend run start:dev",
+    "dev:frontend": "npm.cmd --workspace apps/frontend run dev",
+    "build:backend": "npm.cmd --workspace apps/backend run build",
+    "build:frontend": "npm.cmd --workspace apps/frontend run build"
+  }
+}

@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Portal root per tenant slug
+# /core/portal/<slug> -> /core/portal/index.php?t=<slug>
+RewriteRule ^([A-Za-z0-9\-\_]+)/?$ index.php?t=$1 [L,QSA]
+
+# Specific routes under tenant slug
+RewriteRule ^([A-Za-z0-9\-\_]+)/verify/?$ verify.php?t=$1 [L,QSA]
+RewriteRule ^([A-Za-z0-9\-\_]+)/approve/?$ approve.php?t=$1 [L,QSA]
+RewriteRule ^([A-Za-z0-9\-\_]+)/receipt/?$ receipt.php?t=$1 [L,QSA]
+RewriteRule ^([A-Za-z0-9\-\_]+)/submit_approval/?$ submit_approval.php?t=$1 [L,QSA]
