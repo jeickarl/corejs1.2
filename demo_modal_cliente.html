@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Demo Modal Nuevo Cliente · Estilo iOS / Notion</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<style>
+  html, body {
+    height: 100%;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #e0e7ff 0%, rgba(224,231,255,0) 60%),
+      radial-gradient(900px 500px at 100% 0%, #fce7f3 0%, rgba(252,231,243,0) 55%),
+      linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, system-ui, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ 1) BACKDROP estilo iOS (blur + saturate) ============ */
+  .modal-backdrop-ios {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.38);
+    backdrop-filter: blur(8px) saturate(180%);
+    -webkit-backdrop-filter: blur(8px) saturate(180%);
+    z-index: 1040;
+    opacity: 0;
+    transition: opacity 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .modal-backdrop-ios.show { opacity: 1; }
+
+  /* ============ 2) MODAL CONTENEDOR (card satinado) ============ */
+  .modal-ios {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -48%) scale(0.96);
+    transform-origin: 50% 50%;
+    width: min(880px, 92vw);
+    max-height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 0.5px solid rgba(15, 23, 42, 0.08);
+    border-radius: 20px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.8) inset,
+      0 18px 46px rgba(15, 23, 42, 0.14),
+      0 8px 22px rgba(15, 23, 42, 0.08);
+    z-index: 1050;
+    opacity: 0;
+    transition:
+      opacity 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    overflow: hidden;
+    contain: layout style;
+  }
+  .modal-ios.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  /* ============ 3) HEADER SATINADO (mismo que MainLayout) ============ */
+  .modal-ios-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 22px;
+    border-bottom: 0.5px solid rgba(15, 23, 42, 0.08);
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .modal-ios-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: 0.01em;
+  }
+  .modal-ios-title .icon-chip {
+    width: 30px;
+    height: 30px;
+    aspect-ratio: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.28);
+  }
+  .modal-close-btn {
+    width: 32px;
+    height: 32px;
+    aspect-ratio: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #f1f5f9;
+    color: #475569;
+    border: 0.5px solid rgba(15, 23, 42, 0.06);
+    transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+  }
+  .modal-close-btn:hover { background: #e2e8f0; color: #0f172a; transform: translateY(-1px); }
+  .modal-close-btn:active { transform: translateY(0); }
+
+  /* ============ 4) BODY / PADDING / RESPIRACIÓN ============ */
+  .modal-ios-body {
+    padding: 22px 26px 10px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    scrollbar-gutter: stable;
+  }
+  .modal-ios-body::-webkit-scrollbar { width: 10px; }
+  .modal-ios-body::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.12); border-radius: 20px; }
+  .modal-ios-body::-webkit-scrollbar-thumb:hover { background: rgba(15,23,42,0.22); }
+
+  /* ============ 5) SEGMENTED CONTROL (selector Persona / Empresa) iOS ============ */
+  .seg-wrap { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; }
+  .seg-label { font-size: 12.5px; font-weight: 700; color: #334155; letter-spacing: 0.03em; text-transform: uppercase; }
+  .segmented {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 6px;
+    background: #f1f5f9;
+    border-radius: 14px;
+    border: 0.5px solid rgba(15,23,42,0.06);
+  }
+  .segmented button {
+    position: relative;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    transition: background 200ms ease, color 200ms ease, box-shadow 200ms ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .segmented button:hover { color: #0f172a; }
+  .segmented button.active {
+    background: #ffffff;
+    color: #0f172a;
+    font-weight: 700;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,1) inset,
+      0 1px 0 rgba(15,23,42,0.04),
+      0 2px 8px rgba(15, 23, 42, 0.06);
+  }
+  .segmented button i {
+    width: 15px;
+    height: 15px;
+    aspect-ratio: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-size: 12.5px;
+  }
+  .segmented button.active i { color: #2563eb; }
+
+  /* ============ 6) BADGE DE SECCIÓN estilo Notion (Información Personal...) ============ */
+  .section-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #334155;
+    font-size: 13.5px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    border: 0.5px solid rgba(15,23,42,0.04);
+    line-height: 1;
+  }
+  .section-pill i {
+    color: #475569;
+    width: 15px;
+    height: 15px;
+    aspect-ratio: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-size: 12.5px;
+  }
+
+  /* ============ 7) INPUTS estilo NOTION / iOS (44px / 14px radius / glow focus) ============ */
+  .form-label-ios {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 7px;
+    letter-spacing: 0.01em;
+  }
+  .form-label-ios .req { color: #ef4444; }
+  .input-notion {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px 0 42px;
+    border-radius: 14px;
+    border: 0.5px solid rgba(148, 163, 184, 0.55);
+    background: #ffffff;
+    font-size: 14.5px;
+    color: #0f172a;
+    outline: none;
+    transition:
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      background 180ms ease,
+      transform 120ms ease;
+    box-shadow:
+      0 1px 0 rgba(15,23,42,0.02) inset,
+      0 1px 0 rgba(255,255,255,1);
+    line-height: 1.2;
+  }
+  .input-notion:hover { border-color: rgba(148, 163, 184, 0.9); }
+  .input-notion:focus {
+    border-color: #3b82f6;
+    box-shadow:
+      0 0 0 4px rgba(59, 130, 246, 0.12),
+      0 0 0 0.5px rgba(59,130,246,0.35);
+  }
+  .input-notion::placeholder { color: #94a3b8; }
+  .input-wrap { display: block; margin-bottom: 16px; }
+  .input-box { position: relative; display: block; }
+  .input-box .icon-inside {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 14px;
+    width: 20px;
+    height: 20px;
+    aspect-ratio: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    pointer-events: none;
+    font-size: 14px;
+    line-height: 1;
+  }
+  .help-ios {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #64748b;
+    padding-left: 4px;
+  }
+  .help-ios i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-size: 12px;
+    width: 14px;
+    aspect-ratio: 1 / 1;
+    vertical-align: middle;
+  }
+
+  /* ============ 8) INPUT TELÉFONO con PREFIJO adentro ============ */
+  .phone-group {
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+  .phone-prefix {
+    height: 44px;
+    border-radius: 14px;
+    border: 0.5px solid rgba(148, 163, 184, 0.55);
+    background: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    color: #0f172a;
+    font-size: 14.5px;
+    font-weight: 600;
+    box-shadow:
+      0 1px 0 rgba(15,23,42,0.02) inset,
+      0 1px 0 rgba(255,255,255,1);
+    line-height: 1;
+  }
+  .phone-prefix i.flag-icon {
+    width: 18px;
+    height: 18px;
+    aspect-ratio: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #2563eb;
+    line-height: 1;
+    font-size: 13px;
+  }
+  .phone-prefix i.chev {
+    margin-left: auto;
+    color: #94a3b8;
+    font-size: 10px;
+    width: 16px;
+    aspect-ratio: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* ============ 9) FOOTER estilo iOS (botones pill destacados) ============ */
+  .modal-ios-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 22px 18px;
+    gap: 10px;
+    border-top: 0.5px solid rgba(15, 23, 42, 0.08);
+    background: rgba(248, 250, 252, 0.86);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .btn-pill-cancel {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 42px;
+    padding: 0 18px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    color: #475569;
+    font-weight: 700;
+    border: 0.5px solid rgba(15,23,42,0.06);
+    transition: background 180ms ease, color 180ms ease, transform 120ms ease;
+  }
+  .btn-pill-cancel:hover { background: #e2e8f0; color: #0f172a; }
+  .btn-pill-cancel:active { transform: translateY(1px); }
+
+  .btn-pill-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 42px;
+    padding: 0 22px;
+    min-width: 200px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #0b1220 0%, #111827 100%);
+    color: #ffffff;
+    font-weight: 700;
+    border: 0.5px solid rgba(255,255,255,0.06);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.1) inset,
+      0 8px 18px rgba(15, 23, 42, 0.28);
+    transition: transform 120ms ease, box-shadow 180ms ease, filter 180ms ease;
+  }
+  .btn-pill-primary:hover { filter: brightness(1.08); }
+  .btn-pill-primary:active { transform: translateY(1px); }
+
+  /* ============ 10) ALERT estilo Notion inline (validación) ============ */
+  .alert-notion {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border-left: 3px solid #f59e0b;
+    background: #fffbeb;
+    color: #78350f;
+    font-size: 13.5px;
+    margin-bottom: 18px;
+  }
+  .alert-notion i { margin-top: 2px; color: #d97706; }
+
+  /* ============ 11) BOTÓN LANZADOR DE DEMO ============ */
+  .demo-launcher {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 14px 26px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    font-weight: 800;
+    border: none;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.32);
+    z-index: 1030;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .demo-launcher:hover { filter: brightness(1.07); }
+  .hint {
+    position: fixed;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    color: #475569;
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(8px);
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 0.5px solid rgba(15,23,42,0.08);
+  }
+
+  /* ============ 12) Responsive móvil ============ */
+  @media (max-width: 640px) {
+    .modal-ios { width: 96vw; max-height: calc(100vh - 24px); border-radius: 18px; }
+    .modal-ios-body { padding: 16px; }
+    .phone-group { grid-template-columns: 96px 1fr; }
+    .modal-ios-footer { flex-direction: column-reverse; align-items: stretch; }
+    .btn-pill-primary { min-width: 0; justify-content: center; }
+    .btn-pill-cancel { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+  <div class="hint">
+    <i class="fas fa-lightbulb text-warning me-2"></i>
+    Demo · Click en "Abrir modal" para ver el nuevo estilo de "Nuevo Cliente"
+  </div>
+
+  <!-- Botón lanzador del modal -->
+  <button class="demo-launcher" id="openBtn">
+    <i class="fas fa-plus-circle"></i>
+    Abrir modal · Nuevo Cliente
+  </button>
+
+  <!-- Backdrop iOS blur -->
+  <div class="modal-backdrop-ios" id="backdrop"></div>
+
+  <!-- ============= MODAL NUEVO CLIENTE (nuevo diseño) ============= -->
+  <div class="modal-ios" id="modalClient" role="dialog" aria-modal="true" aria-labelledby="titleClient">
+    <!-- HEADER SATINADO -->
+    <header class="modal-ios-header">
+      <div class="modal-ios-title" id="titleClient">
+        <span class="icon-chip"><i class="fas fa-user-plus"></i></span>
+        Nuevo Cliente
+      </div>
+      <button class="modal-close-btn" id="closeBtn" aria-label="Cerrar">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </header>
+
+    <!-- BODY -->
+    <section class="modal-ios-body">
+      <!-- Alerta de validación estilo Notion (visible solo demo) -->
+      <div class="alert-notion">
+        <i class="fas fa-circle-info"></i>
+        Completa los campos marcados con <strong>*</strong>. La identificación se usa para buscar órdenes históricas del cliente.
+      </div>
+
+      <!-- SEGMENTED Tipo Cliente -->
+      <div class="seg-wrap">
+        <div class="seg-label">Tipo de Cliente</div>
+        <div class="segmented" role="tablist">
+          <button type="button" class="active" data-seg="person">
+            <i class="fas fa-user"></i> Persona Natural
+          </button>
+          <button type="button" data-seg="company">
+            <i class="fas fa-building"></i> Empresa
+          </button>
+        </div>
+      </div>
+
+      <!-- SECCIÓN: Información Personal -->
+      <div class="section-pill">
+        <i class="fas fa-id-card"></i> Información Personal
+      </div>
+      <div class="row g-16">
+        <div class="col-md-6">
+          <div class="input-wrap">
+            <label class="form-label-ios" for="idNumber">Número de Identificación</label>
+            <div class="input-box">
+              <span class="icon-inside"><i class="fas fa-id-card"></i></span>
+              <input id="idNumber" class="input-notion" placeholder="Cédula, pasaporte, etc." />
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="input-wrap">
+            <label class="form-label-ios" for="fullName">Nombre Completo <span class="req">*</span></label>
+            <div class="input-box">
+              <span class="icon-inside"><i class="fas fa-user"></i></span>
+              <input id="fullName" class="input-notion" placeholder="Nombre completo del cliente" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN: Información de Contacto -->
+      <div class="section-pill">
+        <i class="fas fa-address-book"></i> Información de Contacto
+      </div>
+      <div class="row g-16">
+        <div class="col-md-6">
+          <div class="input-wrap">
+            <label class="form-label-ios">Teléfono <span class="req">*</span></label>
+            <div class="phone-group">
+              <div class="phone-prefix">
+                <i class="fas fa-globe flag-icon"></i>
+                <span>+57</span>
+                <i class="fas fa-chevron-down chev"></i>
+              </div>
+              <div class="input-box">
+                <input class="input-notion" style="padding-left: 14px" placeholder="300 123 4567" />
+              </div>
+            </div>
+            <span class="help-ios"><i class="fas fa-circle-info me-1"></i>Prefijo y número de teléfono (para WhatsApp y notificaciones SMS)</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="input-wrap">
+            <label class="form-label-ios" for="email">Email</label>
+            <div class="input-box">
+              <span class="icon-inside"><i class="fas fa-envelope"></i></span>
+              <input id="email" class="input-notion" type="email" placeholder="correo@ejemplo.com" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dirección (solo una fila) -->
+      <div class="input-wrap">
+        <label class="form-label-ios" for="addr">Dirección</label>
+        <div class="input-box">
+          <span class="icon-inside"><i class="fas fa-location-dot"></i></span>
+          <input id="addr" class="input-notion" placeholder="Dirección completa del cliente (opcional)" />
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER BOTONES -->
+    <footer class="modal-ios-footer">
+      <button class="btn-pill-cancel" id="cancelBtn">
+        <i class="fas fa-xmark"></i> Cancelar
+      </button>
+      <button class="btn-pill-primary" id="saveBtn">
+        <i class="fas fa-floppy-disk"></i> Guardar Cliente
+      </button>
+    </footer>
+  </div>
+
+  <script>
+    // ============ Toggle modal (animación fade + scale) ============
+    const $ = s => document.querySelector(s);
+    const backdrop = $('#backdrop');
+    const modal = $('#modalClient');
+
+    function openModal() {
+      backdrop.classList.add('show');
+      modal.classList.add('show');
+      setTimeout(() => $('#fullName')?.focus(), 160);
+    }
+    function closeModal() {
+      backdrop.classList.remove('show');
+      modal.classList.remove('show');
+    }
+
+    $('#openBtn').addEventListener('click', openModal);
+    $('#closeBtn').addEventListener('click', closeModal);
+    $('#cancelBtn').addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+    });
+
+    // ============ Segmented control Persona / Empresa ============
+    const segBtns = document.querySelectorAll('.segmented button');
+    segBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        segBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Autoabrir al terminar de cargar para que el usuario lo vea de una vez
+    window.addEventListener('load', () => {
+      setTimeout(openModal, 380);
+    });
+  </script>
+</body>
+</html>
