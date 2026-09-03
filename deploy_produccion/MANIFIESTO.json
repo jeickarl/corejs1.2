@@ -1,40 +1,20 @@
 {
-  "generado": "2026-09-03T04:34:06.902Z",
+  "generado": "2026-09-03T04:48:10.877Z",
   "archivos": {
     "sql/core_master.sql.gz": {
-      "sha256": "dc67492a31660507df5205da9100c346d80dbc990c86d920cc9f552488f6f706",
-      "kbs": 4,
-      "descripcion": "Base master core_master"
+      "sha256": "c2fdb96ae80bfad230e7324d1cc9b1571a96aff0f394b534bb2c8e2132df6fca",
+      "kbs": 3,
+      "descripcion": "Base master (1 sola empresa + 1 usuario master + 2 super_admins)"
     },
     "sql/core_tenant_000001.sql.gz": {
-      "sha256": "8692ad47de425f95822a019e68db685ed26e2d0065cd7fecf20d663ce30c79dc",
+      "sha256": "2268398fcb41600b575bc2b42ea51c2a35ff43fc2dc2fd618ab12ff957ddf938",
       "kbs": 16,
-      "descripcion": "Tenant core_tenant_000001"
-    },
-    "sql/core_tenant_000002.sql.gz": {
-      "sha256": "e9af8f647d9dbf42e81c6d361b6ba4f5407079b639d58c3645d68dee0fa90138",
-      "kbs": 18,
-      "descripcion": "Tenant core_tenant_000002"
-    },
-    "sql/core_tenant_000003.sql.gz": {
-      "sha256": "0b2c928a67555ddb67a7a5d4df413a765a1028617a4d958639d373ee89dcc257",
-      "kbs": 7,
-      "descripcion": "Tenant core_tenant_000003"
-    },
-    "sql/core_tenant_000009.sql.gz": {
-      "sha256": "4b4e61169a8bf91e6de2a33436319dfa27b694e25a0786e16158cac828008ef5",
-      "kbs": 1,
-      "descripcion": "Tenant core_tenant_000009"
-    },
-    "sql/core_tenant_000010.sql.gz": {
-      "sha256": "1ecd1998c413b027e629998c7e2f2dccf6c9ce43090781b94464abcd11712ded",
-      "kbs": 1,
-      "descripcion": "Tenant core_tenant_000010"
+      "descripcion": "Tenant core_tenant_000001 (datos operativos a 0, 1 admin interno, counters=0)"
     },
     "media/corejs_media.zip": {
-      "sha256": "d751e3ef5794fdc57dd76f2101806cfb81d04a585d512edb1b3e07a3d9485d78",
+      "sha256": "185d802d2b41b870b13f788f480c1b9b2930b6cf42705ff0d48145d6f9b4be52",
       "kbs": 1793,
-      "descripcion": "Media limpia (brands defaults + user_1.jpg)",
+      "descripcion": "Media limpia: 17 logos genericos + default user_1.jpg + .gitkeep tenants 1..10",
       "archivos_internos": 29
     }
   }
