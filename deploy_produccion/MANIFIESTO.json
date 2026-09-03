@@ -1,20 +1,20 @@
 {
-  "generado": "2026-09-03T05:36:08.306Z",
+  "generado": "2026-09-03T05:44:19.545Z",
   "archivos": {
     "sql/core_master.sql.gz": {
-      "sha256": "03fc9c344882e7a7ce0d0555928c68c97695c9f27264ccbe9295a37b119827a6",
-      "kbs": 3,
-      "descripcion": "Base master (1 empresa + 1 usuario master + 1 superadmin jeisson SOLO)"
+      "sha256": "af7ca5c1c76955114502fef5b75488f5d7c6e303319718ad8f845c8d793e9475",
+      "kbs": 4,
+      "descripcion": "Master (1 empresa activa id=1, AUTO_INCREMENT empresas=2, 1 superadmin jeisson, 10 pools (1 used + 9 available 000002..000010), stock licencias)"
     },
     "sql/core_tenant_000001.sql.gz": {
-      "sha256": "aa5f0fd866d4ac53e64ec9c315e18dd311134180b1697a1e4106d1e348b43e84",
+      "sha256": "1e8b00b4fc1360514a1ebcef804e7e1fea53a8dc9d9e086c6471a72afb4eeab0",
       "kbs": 16,
-      "descripcion": "Tenant 000001 - 1 user admin + counters 0 + marcas 20"
+      "descripcion": "Tenant 1 - 1 user admin + counters 0 + marcas 20"
     },
     "media/corejs_media.zip": {
-      "sha256": "7acc5986e0db17eafabfc3c3d72230762672892a72dac655c8f710e3f9a0439e",
+      "sha256": "1914d42c99bd767f0ead5833525a6f7e38028a6833213916e5e020c34beb79f7",
       "kbs": 3005,
-      "descripcion": "Media final: uploads/1/ completo (brands 17 logos, orders, settings, users/1/foto, portal, feedback) + placeholders tenants 2..10 + htaccess seguridad"
+      "descripcion": "Media final: uploads/1 completo (17 logos, orders, settings, users/1/foto, portal, feedback) + placeholders 2..10/brands .gitkeep + htaccess"
     }
   }
 }
