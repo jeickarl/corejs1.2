@@ -1,21 +1,20 @@
 {
-  "generado": "2026-09-03T04:48:10.877Z",
+  "generado": "2026-09-03T05:20:47.419Z",
   "archivos": {
     "sql/core_master.sql.gz": {
-      "sha256": "c2fdb96ae80bfad230e7324d1cc9b1571a96aff0f394b534bb2c8e2132df6fca",
+      "sha256": "1ef772a45c728fff8e8510805e558f7173fc033d6ba68b3888b1a639c9c1d6fc",
       "kbs": 3,
-      "descripcion": "Base master (1 sola empresa + 1 usuario master + 2 super_admins)"
+      "descripcion": "Base master (1 sola empresa + 1 usuario master + 1 SOLO super_admin jeisson)"
     },
     "sql/core_tenant_000001.sql.gz": {
-      "sha256": "2268398fcb41600b575bc2b42ea51c2a35ff43fc2dc2fd618ab12ff957ddf938",
+      "sha256": "4447c4a425faea2ca60c7f0236f77533606c0c1a9c9debfecf05e1f7127ddb1b",
       "kbs": 16,
       "descripcion": "Tenant core_tenant_000001 (datos operativos a 0, 1 admin interno, counters=0)"
     },
     "media/corejs_media.zip": {
       "sha256": "185d802d2b41b870b13f788f480c1b9b2930b6cf42705ff0d48145d6f9b4be52",
       "kbs": 1793,
-      "descripcion": "Media limpia: 17 logos genericos + default user_1.jpg + .gitkeep tenants 1..10",
-      "archivos_internos": 29
+      "descripcion": "Media limpia: 17 logos genericos + default user_1.jpg + .gitkeep tenants 1..10"
     }
   }
 }
