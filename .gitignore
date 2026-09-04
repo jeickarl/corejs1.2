@@ -28,3 +28,9 @@ legacy/vendor/
 apps/backend/legacy/uploads/
 apps/backend/uploads/
 
+## Deploy artifacts / archives
+*.rar
+*.zip
+deploy_produccion/
+deploy_produccion*
+
